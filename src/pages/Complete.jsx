@@ -6,7 +6,11 @@ const Complete = () => {
   const location = useLocation();
   
   const formData = location.state?.formData || {};
+  const responseData = location.state?.responseData || {};
+  
   const hasCreatedTeam = formData.hasTeam === true && formData.teamChoice === 'create';
+  const hasJoinedTeam = formData.hasTeam === true && formData.teamChoice === 'join';
+  const hasTeam = formData.hasTeam === true;
 
   return (
     <div className="min-h-screen bg-dark relative overflow-hidden flex flex-col">
@@ -58,12 +62,57 @@ const Complete = () => {
           {/* Message */}
           <div className="space-y-4 text-gray-300">
             <p className="text-lg">
-              Congratulation, You have successfully completed your registration !
+              Congratulations, You have successfully completed your registration!
             </p>
             <p className="text-base">
               You will receive an email confirming whether your application has been accepted or declined.
             </p>
           </div>
+
+          {/* Team Code Display - Show if user created or joined a team */}
+          {hasTeam && responseData.teamCode && (
+            <div className="mt-8 p-6 bg-gray-800/30 border border-gray-700/50 rounded-lg text-left max-w-xl mx-auto">
+              <div className="flex items-start gap-3 mb-4">
+                <div className="mt-1">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4M12 8h.01"/>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-semibold mb-2">
+                    {hasCreatedTeam ? 'Your Team Code' : 'Team Information'}
+                  </h3>
+                  {hasCreatedTeam && (
+                    <p className="text-sm text-gray-300 mb-3">
+                      A code has been sent to your email address that will allow your team-mates to join your team.
+                    </p>
+                  )}
+                  {hasJoinedTeam && (
+                    <p className="text-sm text-gray-300 mb-3">
+                      You have successfully joined the team!
+                    </p>
+                  )}
+                  <div className="mt-4 p-4 bg-gray-900/50 rounded border border-gray-700/30">
+                    <div className="mb-2">
+                      <span className="text-xs text-gray-400">Team Code:</span>
+                      <p className="text-xl font-mono font-bold text-[#E2BFFD] mt-1">
+                        {responseData.teamCode}
+                      </p>
+                    </div>
+                    {responseData.teamName && (
+                      <div>
+                        <span className="text-xs text-gray-400">Team Name:</span>
+                        <p className="text-lg text-white mt-1">
+                          {responseData.teamName}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Progress bar */}
           <div className="mt-12 mb-8 max-w-xl mx-auto">
@@ -74,21 +123,6 @@ const Complete = () => {
               ></div>
             </div>
           </div>
-
-          {/* Info Box - Only show if user created a team */}
-          {hasCreatedTeam && (
-            <div className="mt-12 p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg flex items-start gap-3 text-left max-w-xl mx-auto">
-              <div className="mt-1">
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 16v-4M12 8h.01"/>
-                </svg>
-              </div>
-              <p className="text-sm text-gray-300">
-                A code is sent on your email address that will allow your team-mates to join your team.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>

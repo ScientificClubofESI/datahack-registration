@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import { submitRegistration } from '../services/api';
 
 const Team = ({ formData, updateFormData }) => {
   const navigate = useNavigate();
@@ -11,12 +12,16 @@ const Team = ({ formData, updateFormData }) => {
     teamCode: formData.teamCode || '',
     additionalInfo: formData.additionalInfo || '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setLocalData({
       ...localData,
       [e.target.name]: e.target.value
     });
+    // Clear error when user makes changes
+    if (error) setError(null);
   };
 
   const handleTeamSelection = (value) => {
@@ -27,6 +32,7 @@ const Team = ({ formData, updateFormData }) => {
       teamName: '',
       teamCode: '',
     });
+    if (error) setError(null);
   };
 
   const handleTeamChoice = (choice) => {
@@ -36,14 +42,45 @@ const Team = ({ formData, updateFormData }) => {
       teamName: '',
       teamCode: '',
     });
+    if (error) setError(null);
   };
 
-const handleRegister = () => {
-  updateFormData(localData);
-  const completeFormData = { ...formData, ...localData };
-  console.log('Form submitted:', completeFormData);
-  navigate('/complete', { state: { formData: completeFormData } });
-};
+  const handleRegister = async () => {
+    // Update form data with local team data
+    updateFormData(localData);
+    const completeFormData = { ...formData, ...localData };
+    
+    // Validate form
+    if (!isValid()) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Submit to backend
+      const result = await submitRegistration(completeFormData);
+
+      if (result.success) {
+        // Navigate to complete page with response data
+        navigate('/complete', { 
+          state: { 
+            formData: completeFormData,
+            responseData: result.data 
+          } 
+        });
+      } else {
+        // Show error message
+        setError(result.error);
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      setError(err.message || 'An error occurred. Please try again.');
+      setIsSubmitting(false);
+    }
+  };
 
   const isValid = () => {
     if (localData.hasTeam === null) return false;
@@ -60,13 +97,20 @@ const handleRegister = () => {
       showBack={true} 
       showNext={true} 
       onNext={handleRegister} 
-      nextText="Register"
-      nextDisabled={!isValid()}
+      nextText={isSubmitting ? "Registering..." : "Register"}
+      nextDisabled={!isValid() || isSubmitting}
     >
       <div className="pt-8">
         <h1 className="text-5xl font-bold text-white mb-8 tracking-tight text-right font-virgo">
           TEAM
         </h1>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm">
+            {error}
+          </div>
+        )}
 
         <div className="space-y-4">
           <div>
@@ -76,21 +120,23 @@ const handleRegister = () => {
             <div className="flex gap-4">
               <button
                 onClick={() => handleTeamSelection(true)}
+                disabled={isSubmitting}
                 className={`px-8 py-2 rounded-lg font-medium transition-all ${
                   localData.hasTeam === true
                     ? 'bg-white text-dark'
                     : 'bg-gray-800/50 border border-gray-700/50 text-white hover:bg-gray-700/50'
-                }`}
+                } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 YES
               </button>
               <button
                 onClick={() => handleTeamSelection(false)}
+                disabled={isSubmitting}
                 className={`px-8 py-2 rounded-lg font-medium transition-all ${
                   localData.hasTeam === false
                     ? 'bg-white text-dark'
                     : 'bg-gray-800/50 border border-gray-700/50 text-white hover:bg-gray-700/50'
-                }`}
+                } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 NO
               </button>
@@ -106,21 +152,23 @@ const handleRegister = () => {
                 <div className="flex gap-4">
                   <button
                     onClick={() => handleTeamChoice('join')}
+                    disabled={isSubmitting}
                     className={`px-6 py-2 rounded-lg font-medium transition-all ${
                       localData.teamChoice === 'join'
                         ? 'bg-white text-dark'
                         : 'bg-gray-800/50 border border-gray-700/50 text-white hover:bg-gray-700/50'
-                    }`}
+                    } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     Join Your Team
                   </button>
                   <button
                     onClick={() => handleTeamChoice('create')}
+                    disabled={isSubmitting}
                     className={`px-6 py-2 rounded-lg font-medium transition-all ${
                       localData.teamChoice === 'create'
                         ? 'bg-white text-dark'
                         : 'bg-gray-800/50 border border-gray-700/50 text-white hover:bg-gray-700/50'
-                    }`}
+                    } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     Create a Team
                   </button>
@@ -142,6 +190,7 @@ const handleRegister = () => {
                     onChange={handleChange}
                     placeholder="Enter your team's name"
                     className="input-field"
+                    disabled={isSubmitting}
                   />
                 </div>
               )}
@@ -161,6 +210,7 @@ const handleRegister = () => {
                     onChange={handleChange}
                     placeholder="Enter your team's code"
                     className="input-field"
+                    disabled={isSubmitting}
                   />
                 </div>
               )}
@@ -178,6 +228,7 @@ const handleRegister = () => {
               placeholder="Your answer here . . ."
               rows="6"
               className="input-field resize-none"
+              disabled={isSubmitting}
             />
           </div>
         </div>
