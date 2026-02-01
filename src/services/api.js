@@ -38,20 +38,24 @@ const mapFormDataToAPI = async (formData) => {
     
     // Links
     github: formData.github || '',
+    kaggle: formData.kaggle || '',
     linkedin: formData.linkedin || '',
-    // Note: kaggle is not in backend schema, so we'll skip it
-    // discord is in schema but not in frontend, so we'll skip it
     
-    // Motivation - combine howHeard and motivation into comment
-    comment: formData.additionalInfo 
-      ? `${formData.howHeard ? `How heard: ${formData.howHeard}\n\n` : ''}${formData.motivation ? `Motivation: ${formData.motivation}` : ''}${formData.additionalInfo ? `\n\nAdditional: ${formData.additionalInfo}` : ''}`
-      : `${formData.howHeard ? `How heard: ${formData.howHeard}\n\n` : ''}${formData.motivation ? `Motivation: ${formData.motivation}` : ''}`,
+    // Motivation - send separately
+    howHeard: formData.howHeard || '',
+    motivation: formData.motivation || '',
+    comment: formData.additionalInfo || '',
     
     // Team
     hasTeam: formData.hasTeam === true,
   };
 
   // Handle CV file upload - convert to base64
+  // CV is required - validate it exists
+  if (!formData.cv) {
+    throw new Error('CV is required. Please upload your CV.');
+  }
+
   if (formData.cv instanceof File) {
     try {
       // Check file size (10MB limit as per frontend validation)
@@ -70,10 +74,13 @@ const mapFormDataToAPI = async (formData) => {
       if (error.message.includes('too large')) {
         throw error;
       }
-      apiData.cv = '';
+      // Re-throw the error if CV conversion fails
+      throw new Error('Failed to process CV file. Please try uploading again.');
     }
   } else if (formData.cv) {
     apiData.cv = formData.cv;
+  } else {
+    throw new Error('CV is required. Please upload your CV.');
   }
 
   // Handle team logic
@@ -98,8 +105,18 @@ const mapFormDataToAPI = async (formData) => {
  */
 export const submitRegistration = async (formData) => {
   try {
+    // Validate CV before proceeding
+    if (!formData.cv) {
+      throw new Error('CV is required. Please upload your CV before submitting.');
+    }
+
     // Map form data to API format
     const apiData = await mapFormDataToAPI(formData);
+    
+    // Double-check CV is in the API data
+    if (!apiData.cv) {
+      throw new Error('CV is required. Please upload your CV before submitting.');
+    }
     
     // Make API call using axios
     // Configure axios to handle larger payloads (up to 50MB)

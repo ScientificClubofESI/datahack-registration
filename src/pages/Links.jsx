@@ -35,7 +35,7 @@ const Links = ({ formData, updateFormData }) => {
     navigate('/motivation');
   };
 
-  const isValid = localData.github && localData.kaggle && localData.linkedin;
+  const isValid = localData.cv && localData.github && localData.kaggle && localData.linkedin;
 
   return (
     <Layout progress={56} showBack={true} showNext={true} onNext={handleNext} nextDisabled={!isValid}>

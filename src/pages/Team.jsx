@@ -50,9 +50,43 @@ const Team = ({ formData, updateFormData }) => {
     updateFormData(localData);
     const completeFormData = { ...formData, ...localData };
     
-    // Validate form
+    // Validate team-specific fields
     if (!isValid()) {
-      setError('Please fill in all required fields');
+      setError('Please fill in all required team fields');
+      return;
+    }
+
+    // Comprehensive validation - check all required fields
+    const validationErrors = [];
+    
+    // Basic Details
+    if (!completeFormData.firstName) validationErrors.push('First name');
+    if (!completeFormData.lastName) validationErrors.push('Last name');
+    if (!completeFormData.email) validationErrors.push('Email');
+    if (!completeFormData.phoneNumber) validationErrors.push('Phone number');
+    
+    // Skills
+    if (!completeFormData.skills) validationErrors.push('Skills');
+    if (!completeFormData.hackathonsAttended) validationErrors.push('Number of hackathons attended');
+    
+    // Education
+    if (!completeFormData.university) validationErrors.push('University');
+    if (!completeFormData.major) validationErrors.push('Major');
+    if (!completeFormData.degree) validationErrors.push('Degree');
+    if (!completeFormData.graduationYear) validationErrors.push('Graduation year');
+    
+    // Links
+    if (!completeFormData.cv) validationErrors.push('CV');
+    if (!completeFormData.github) validationErrors.push('Github');
+    if (!completeFormData.kaggle) validationErrors.push('Kaggle');
+    if (!completeFormData.linkedin) validationErrors.push('LinkedIn');
+    
+    // Motivation
+    if (!completeFormData.howHeard) validationErrors.push('How you heard about DATAHACK');
+    if (!completeFormData.motivation) validationErrors.push('Motivation');
+    
+    if (validationErrors.length > 0) {
+      setError(`Please fill in all required fields: ${validationErrors.join(', ')}`);
       return;
     }
 
