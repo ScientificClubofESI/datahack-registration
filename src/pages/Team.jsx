@@ -76,7 +76,9 @@ const Team = ({ formData, updateFormData }) => {
     if (!completeFormData.graduationYear) validationErrors.push('Graduation year');
     
     // Links
-    if (!completeFormData.cv) validationErrors.push('CV');
+    if (!completeFormData.cv || (typeof completeFormData.cv === 'string' && !completeFormData.cv.startsWith('data:'))) {
+     validationErrors.push('CV');
+    }    
     if (!completeFormData.github) validationErrors.push('Github');
     if (!completeFormData.kaggle) validationErrors.push('Kaggle');
     if (!completeFormData.linkedin) validationErrors.push('LinkedIn');
