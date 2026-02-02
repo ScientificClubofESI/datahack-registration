@@ -67,7 +67,8 @@ const mapFormDataToAPI = async (formData) => {
       const base64String = await fileToBase64(formData.cv);
       // Remove data URL prefix (e.g., "data:application/pdf;base64,") and keep only base64 string
       // This reduces payload size
-      apiData.cv = base64String.includes(',') ? base64String.split(',')[1] : base64String;
+      apiData.cv = base64String;
+      apiData.cvOriginalName = formData.cv.name;
     } catch (error) {
       console.error('Error converting CV to base64:', error);
       // If it's a size error, throw it so user sees the message
