@@ -1,5 +1,5 @@
 import React from 'react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Layout = ({ children, progress, showBack = false, onBack, showNext = true, onNext, nextText = "Next", nextDisabled = false }) => {
