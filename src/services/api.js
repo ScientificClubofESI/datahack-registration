@@ -41,7 +41,7 @@ const mapFormDataToAPI = async (formData) => {
     kaggle: formData.kaggle || '',
     linkedin: formData.linkedin || '',
     
-    // Motivation - send separately
+    // Motivation
     howHeard: formData.howHeard || '',
     motivation: formData.motivation || '',
     comment: formData.additionalInfo || '',
@@ -56,7 +56,13 @@ const mapFormDataToAPI = async (formData) => {
     throw new Error('CV is required. Please upload your CV.');
   }
 
-  if (formData.cv instanceof File) {
+  // Check if cv is already a base64 string (from going back/forward in the form)
+  if (typeof formData.cv === 'string' && formData.cv.startsWith('data:')) {
+    // CV is already converted to base64
+    apiData.cv = formData.cv;
+    apiData.cvOriginalName = formData.cvOriginalName || 'cv.pdf';
+  } else if (formData.cv instanceof File) {
+    // CV is a File object - convert to base64
     try {
       // Check file size (10MB limit as per frontend validation)
       const maxSize = 10 * 1024 * 1024; // 10MB in bytes
@@ -65,8 +71,7 @@ const mapFormDataToAPI = async (formData) => {
       }
       
       const base64String = await fileToBase64(formData.cv);
-      // Remove data URL prefix (e.g., "data:application/pdf;base64,") and keep only base64 string
-      // This reduces payload size
+      // Keep the full base64 string WITH the data URL prefix for Cloudinary
       apiData.cv = base64String;
       apiData.cvOriginalName = formData.cv.name;
     } catch (error) {
@@ -78,8 +83,6 @@ const mapFormDataToAPI = async (formData) => {
       // Re-throw the error if CV conversion fails
       throw new Error('Failed to process CV file. Please try uploading again.');
     }
-  } else if (formData.cv) {
-    apiData.cv = formData.cv;
   } else {
     throw new Error('CV is required. Please upload your CV.');
   }
