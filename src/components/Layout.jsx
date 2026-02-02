@@ -1,9 +1,10 @@
 import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Layout = ({ children, progress, showBack = false, onBack, showNext = true, onNext, nextText = "Next", nextDisabled = false }) => {
   const navigate = useNavigate();
-
+  const [isHovered, setIsHovered] = useState(false);
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -29,15 +30,21 @@ const Layout = ({ children, progress, showBack = false, onBack, showNext = true,
             className="h-12 w-auto object-contain"
           />
         </div>
-        <button 
-          onClick={() => navigate('https://datahack-3.0.cse.club')}
-          className="text-white-80 hover:text-white transition-colors flex items-center gap-2 text-md md:text-lg"
-        >
-          Home
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M7 17L17 7M17 7H7M17 7v10"/>
-          </svg>
-        </button>
+          <button
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={() => (window.location.href = "https://datahack-registration.cse.club/")}
+            className="hidden md:flex group relative items-center gap-2 sm:gap-3 text-white/60 hover:text-white text-base sm:text-lg md:text-xl transition-colors duration-300"
+          >
+            <span className={`transition-transform duration-500 ease-out ${isHovered ? "translate-x-6 sm:translate-x-8" : "translate-x-0"}`}>
+              Register Now
+            </span>
+            <span className={`transition-transform duration-500 ease-out ${isHovered ? "-translate-x-28 sm:-translate-x-36" : "translate-x-0"}`}>
+              <svg width="20" height="20" className="sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 17L17 7M17 7H7M17 7v10" />
+              </svg>
+            </span>
+          </button>
       </header>
 
       <main className="relative z-10 max-w-2xl mx-auto px-6 pb-8">
