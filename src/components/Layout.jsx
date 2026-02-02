@@ -30,7 +30,7 @@ const Layout = ({ children, progress, showBack = false, onBack, showNext = true,
           />
         </div>
         <button 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('https://datahack-3.0.cse.club')}
           className="text-white-80 hover:text-white transition-colors flex items-center gap-2 text-md md:text-lg"
         >
           Home
