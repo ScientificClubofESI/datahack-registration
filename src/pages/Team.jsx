@@ -49,7 +49,9 @@ const Team = ({ formData, updateFormData }) => {
     // Update form data with local team data
     updateFormData(localData);
     const completeFormData = { ...formData, ...localData };
-    
+        console.log('Complete Form Data:', completeFormData);
+console.log('CV Value:', completeFormData.cv);
+console.log('CV Type:', typeof completeFormData.cv);
     // Validate team-specific fields
     if (!isValid()) {
       setError('Please fill in all required team fields');
