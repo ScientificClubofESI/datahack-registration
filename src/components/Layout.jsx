@@ -33,11 +33,11 @@ const Layout = ({ children, progress, showBack = false, onBack, showNext = true,
           <button
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => (window.location.href = "https://datahack-registration.cse.club/")}
+            onClick={() => (window.location.href = "https://datahack-3.0.cse.club/")}
             className="hidden md:flex group relative items-center gap-2 sm:gap-3 text-white/60 hover:text-white text-base sm:text-lg md:text-xl transition-colors duration-300"
           >
             <span className={`transition-transform duration-500 ease-out ${isHovered ? "translate-x-6 sm:translate-x-8" : "translate-x-0"}`}>
-              Register Now
+             Home
             </span>
             <span className={`transition-transform duration-500 ease-out ${isHovered ? "-translate-x-28 sm:-translate-x-36" : "translate-x-0"}`}>
               <svg width="20" height="20" className="sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
