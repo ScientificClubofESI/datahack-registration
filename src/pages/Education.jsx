@@ -10,12 +10,34 @@ const Education = ({ formData, updateFormData }) => {
     degree: formData.degree || '',
     graduationYear: formData.graduationYear || '',
   });
+  const [showOtherUniversity, setShowOtherUniversity] = useState(
+    formData.university && 
+    !['ESI', 'USTHB', 'ENP', 'UMMTO','ENSIA'].includes(formData.university)
+  );
 
   const handleChange = (e) => {
-    setLocalData({
-      ...localData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    
+    if (name === 'university') {
+      if (value === 'Other') {
+        setShowOtherUniversity(true);
+        setLocalData({
+          ...localData,
+          university: ''
+        });
+      } else {
+        setShowOtherUniversity(false);
+        setLocalData({
+          ...localData,
+          university: value
+        });
+      }
+    } else {
+      setLocalData({
+        ...localData,
+        [name]: value
+      });
+    }
   };
 
   const handleNext = () => {
@@ -36,19 +58,44 @@ const Education = ({ formData, updateFormData }) => {
             <label className="block mb-2 text-sm" style={{ color: '#E2BFFD' }}>
               University <span className="text-red-500">*</span>
             </label>
-            <select
-              name="university"
-              value={localData.university}
-              onChange={handleChange}
-              className="input-field"
-            >
-              <option value="">Select an option</option>
-              <option value="ESI">ESI - École nationale Supérieure d'Informatique</option>
-              <option value="USTHB">USTHB - Université des Sciences et de la Technologie Houari Boumediene</option>
-              <option value="ENP">ENP - École Nationale Polytechnique</option>
-              <option value="UMMTO">UMMTO - Université Mouloud Mammeri de Tizi-Ouzou</option>
-              <option value="Other">Other</option>
-            </select>
+            {!showOtherUniversity ? (
+              <select
+                name="university"
+                value={localData.university}
+                onChange={handleChange}
+                className="input-field bg-gray-800"
+              >
+                <option value="">Select an option</option>
+                <option value="ESI">ESI - École nationale Supérieure d'Informatique</option>
+                <option value="USTHB">USTHB - Université des Sciences et de la Technologie Houari Boumediene</option>
+                <option value="ENP">ENP - École Nationale Polytechnique</option>
+                <option value="UMMTO">UMMTO - Université Mouloud Mammeri de Tizi-Ouzou</option>
+                <option value="ENSIA">ENSIA - École Nationale Supérieure d’Intelligence Artificielle</option>
+                <option value="Other">Other</option>
+              </select>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  name="university"
+                  value={localData.university}
+                  onChange={handleChange}
+                  placeholder="Enter your university name"
+                  className="input-field bg-gray-800/30"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOtherUniversity(false);
+                    setLocalData({ ...localData, university: '' });
+                  }}
+                  className="text-sm underline"
+                  style={{ color: '#E2BFFD' }}
+                >
+                  Select from list instead
+                </button>
+              </div>
+            )}
           </div>
 
           <div>
@@ -73,7 +120,7 @@ const Education = ({ formData, updateFormData }) => {
               name="degree"
               value={localData.degree}
               onChange={handleChange}
-              className="input-field"
+              className="input-field bg-gray-800"
             >
               <option value="">Select an option</option>
               <option value="Bachelor">Bachelor's Degree</option>
@@ -93,7 +140,7 @@ const Education = ({ formData, updateFormData }) => {
               value={localData.graduationYear}
               onChange={handleChange}
               placeholder="Enter your graduation year"
-              className="input-field"
+              className="input-field bg-gray-800/30"
             />
           </div>
         </div>
